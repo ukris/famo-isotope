@@ -5,8 +5,6 @@ define(function(require, exports, module) {
         var Transform = require('famous/core/Transform');
         var Surface = require('famous/core/Surface');
         var EventHandler = require('famous/core/EventHandler');
-        var $ = require('http://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.3/zepto.js');
-        console.log($);
         var convert = Math.PI / 180;
         var mainCtx = Engine.createContext();
         //Default data
@@ -15,24 +13,20 @@ define(function(require, exports, module) {
         //Default design
         var headHeight = 18;
         var marginWidth = 20;
-        var XCnt = 6;
-        var YCnt = 4;
-        var XMax = 8;
-        var YMax = 5;
+        var marginBig = 10;
+        var NoX = 6;
+        var NoY = 4;
         var totalWidth = window.innerWidth  -(marginWidth*2);
         var totalHeight =  window.innerHeight -headHeight;
-        var WIDTH = (totalWidth)/ XCnt;
-        var HEIGHT = (totalHeight) / YCnt;
+        var WIDTH = (totalWidth)/ NoX;
+        var HEIGHT = (totalHeight) / NoY;
 
-        var bigMargin = 10;
-        var bigXCnt = 4;
-        var bigYCnt = 6;
-        var bigXXlate = (XCnt/2) * WIDTH;
-        var bigYXlate = 0;
-        var bigTotalWidth = totalWidth/2;
-        var bigTotalHeight = totalHeight;
-        var bigWIDTH = bigTotalWidth / bigXCnt;
-        var bigHEIGHT = bigTotalHeight / bigYCnt;
+        var NoXBigOne = 4;
+        var NoYBigOne = 6;
+        var bigXXlate = 3 * WIDTH;
+        var bigYXlate = HEIGHT;
+        var WIDTHBigOne = (totalWidth/2) / NoXBigOne;
+        var HEIGHTBigOne = totalHeight / NoYBigOne;
         var DURATION = 500;
         //Global data
         var images = [];
@@ -60,9 +54,9 @@ define(function(require, exports, module) {
         function filterCategory() {
             var category = document.getElementById("type");
             var key = category.options[category.selectedIndex].text;
-            for (var i = 0; i < XCnt; i++)
-                for (var j = 0; j < YCnt; j++) {
-                    var index = i * YCnt + j;
+            for (var i = 0; i < NoX; i++)
+                for (var j = 0; j < NoY; j++) {
+                    var index = i * NoY + j;
                     if (images[index].type == key || category.selectedIndex == 0) {
                         images[index].active = true;
                         images[index].removeClass('hide');
@@ -75,9 +69,9 @@ define(function(require, exports, module) {
         }
 
         function init() {
-            for (var j = 0; j < YCnt; j++)
-                for (var i = 0; i < XCnt; i++) {
-                    var index = i + j * XCnt;
+            for (var j = 0; j < NoY; j++)
+                for (var i = 0; i < NoX; i++) {
+                    var index = i + j * NoX;
                     //var image = new ImageSurface({
                     //  size : [ WIDTH, HEIGHT ],
                     //  classes : [ 'image' ]
@@ -88,7 +82,7 @@ define(function(require, exports, module) {
                     image.id = index;
                     image.type = (i + j) % 3;
                     var imgSrc = IMG + IMAGE + " (" + image.id + ").jpg";
-                    console.log(imgSrc);
+
                     var img = '<img class="image" src="' + imgSrc + '"></img>';
                     var summary = '<div class="summary"> ' + 'Summary ' + image.id + '</div>';
                     var details = '<div class="details-hide">' + '<b>Type</b>:' + image.type + '</br> The details of element </div>';
@@ -114,12 +108,12 @@ define(function(require, exports, module) {
                     originMatrixs.push(matrix);
                 }
                 //New matrix for bigOne
-            for (var j = 0; j < bigYCnt; j++)
-                for (var i = 0; i < bigXCnt; i++) {
+            for (var j = 0; j < NoYBigOne; j++)
+                for (var i = 0; i < NoXBigOne; i++) {
 
-                    var index = i + j * bigXCnt;
-                    console.log('translate ' +(i) * bigWIDTH + bigXXlate)
-                    var newMatrix = Transform.translate((i) * bigWIDTH + bigXXlate, (j) * bigHEIGHT + bigYXlate,
+                    var index = i + j * NoXBigOne;
+                    console.log('translate ' +(i) * WIDTHBigOne + bigXXlate)
+                    var newMatrix = Transform.translate((i) * WIDTHBigOne + bigXXlate, (j) * HEIGHTBigOne + bigYXlate,
                         0);
                     newMatrixs.push(newMatrix);
                 }
@@ -143,11 +137,11 @@ define(function(require, exports, module) {
             if (animating) return;
             //Restore layout
             var counter = 0;
-            var index;
-            for (var j = 0; j < YCnt; j++)
-                for (var i = 0; i < XCnt; i++) {
-                    index = i + j * XCnt;
+            for (var j = 0; j < NoY; j++)
+                for (var i = 0; i < NoX; i++) {
+                    var index = i + j * NoX;
                     if (images[index].active) {
+
                         var matrix = originMatrixs[counter];
                         modifiers[index].setTransform(matrix, {
                             duration: DURATION,
@@ -187,6 +181,8 @@ define(function(require, exports, module) {
             }
             mainIndexPrev = mainIndex;
             mainIndex = this.id;
+
+
             showText(mainIndex);
             images[mainIndex].addClass('shadow');
             matrix = Transform.translate(0, 0, 0);
@@ -196,7 +192,7 @@ define(function(require, exports, module) {
                 duration: DURATION,
                 curve: 'easeInOut'
             });
-            modifiers[mainIndex].setSize([bigTotalWidth - bigMargin, bigTotalHeight - bigMargin], {
+            modifiers[mainIndex].setSize([WIDTHBigOne - marginBig, HEIGHTBigOne - marginBig], {
                 duration: DURATION,
                 curve: 'easeInOut'
             }, function () {
@@ -204,12 +200,14 @@ define(function(require, exports, module) {
             })
 
             var counter = 0;
-            for (var j = 0; j < bigYCnt; j++)
-                for (var i = 0; i < bigXCnt; i++) {
-                    var index = i + j * bigXCnt;
+            for (var j = 0; j < NoYBigOne; j++)
+                for (var i = 0; i < NoXBigOne; i++) {
+
+                    var index = i + j * NoXBigOne;
                     if (index == mainIndex) continue;
                     if (images[index].active) {
-                        modifiers[index].setSize([bigWIDTH, bigHEIGHT], {
+
+                        modifiers[index].setSize([WIDTHBigOne, HEIGHTBigOne], {
                             duration: DURATION,
                             curve: 'easeInOut'
                         })
@@ -221,9 +219,31 @@ define(function(require, exports, module) {
                         } : null);
                         counter++;
                     }
+
                 }
         }
 
+        function hover() {
+            var index = this.id;
+            var matrix = Transform.rotate(0.5, 0, 0);
+            matrix = Transform.multiply(modifiers[index].getTransform(), matrix);
+            modifiers[index].setTransform(matrix, {
+                duration: 0,
+                curve: 'easeInOut'
+            }, null);
+
+        }
+
+        function leave() {
+            var index = this.id;
+            var matrix = Transform.rotate(-0.5, 0, 0);
+            matrix = Transform.multiply(modifiers[index].getTransform(), matrix);
+            modifiers[index].setTransform(matrix, {
+                duration: 0,
+                curve: 'easeInOut'
+            }, null);
+
+        }
         init();
         origin();
         //bigOne(0);

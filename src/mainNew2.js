@@ -17,7 +17,7 @@ define(function(require, exports, module) {
         var marginWidth = 20;
         var XCnt = 6;
         var YCnt = 4;
-        var XMax = 8;
+        var XMax = 8
         var YMax = 5;
         var totalWidth = window.innerWidth  -(marginWidth*2);
         var totalHeight =  window.innerHeight -headHeight;
@@ -25,9 +25,9 @@ define(function(require, exports, module) {
         var HEIGHT = (totalHeight) / YCnt;
 
         var bigMargin = 10;
-        var bigXCnt = 4;
-        var bigYCnt = 6;
-        var bigXXlate = (XCnt/2) * WIDTH;
+        var bigXCnt = 5;
+        var bigYCnt = 8;
+        var bigXXlate = (NoX/2) * WIDTH;
         var bigYXlate = 0;
         var bigTotalWidth = totalWidth/2;
         var bigTotalHeight = totalHeight;
@@ -60,9 +60,9 @@ define(function(require, exports, module) {
         function filterCategory() {
             var category = document.getElementById("type");
             var key = category.options[category.selectedIndex].text;
-            for (var i = 0; i < XCnt; i++)
-                for (var j = 0; j < YCnt; j++) {
-                    var index = i * YCnt + j;
+            for (var i = 0; i < XMax; i++)
+                for (var j = 0; j < YMax; j++) {
+                    var index = i * YMax + j;
                     if (images[index].type == key || category.selectedIndex == 0) {
                         images[index].active = true;
                         images[index].removeClass('hide');
@@ -75,9 +75,9 @@ define(function(require, exports, module) {
         }
 
         function init() {
-            for (var j = 0; j < YCnt; j++)
-                for (var i = 0; i < XCnt; i++) {
-                    var index = i + j * XCnt;
+            for (var j = 0; j < YMax; j++)
+                for (var i = 0; i < XMax; i++) {
+                    var index = i + j * XMax;
                     //var image = new ImageSurface({
                     //  size : [ WIDTH, HEIGHT ],
                     //  classes : [ 'image' ]
@@ -196,7 +196,7 @@ define(function(require, exports, module) {
                 duration: DURATION,
                 curve: 'easeInOut'
             });
-            modifiers[mainIndex].setSize([bigTotalWidth - bigMargin, bigTotalHeight - bigMargin], {
+            modifiers[mainIndex].setSize([totalBigWidth - marginBig, totalBigHeight - marginBig], {
                 duration: DURATION,
                 curve: 'easeInOut'
             }, function () {
@@ -204,12 +204,12 @@ define(function(require, exports, module) {
             })
 
             var counter = 0;
-            for (var j = 0; j < bigYCnt; j++)
-                for (var i = 0; i < bigXCnt; i++) {
-                    var index = i + j * bigXCnt;
+            for (var j = 0; j < NoYBigOne; j++)
+                for (var i = 0; i < NoXBigOne; i++) {
+                    var index = i + j * NoXBigOne;
                     if (index == mainIndex) continue;
                     if (images[index].active) {
-                        modifiers[index].setSize([bigWIDTH, bigHEIGHT], {
+                        modifiers[index].setSize([WIDTHBigOne, HEIGHTBigOne], {
                             duration: DURATION,
                             curve: 'easeInOut'
                         })
